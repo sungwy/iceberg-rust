@@ -2152,6 +2152,8 @@
 <a href="#2152" id="2152">2152</a>
 <a href="#2153" id="2153">2153</a>
 <a href="#2154" id="2154">2154</a>
+<a href="#2155" id="2155">2155</a>
+<a href="#2156" id="2156">2156</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -2295,10 +2297,10 @@
     </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>new_from_metadata(
         previous: TableMetadata,
-        previous_file_location: <span class="prelude-ty">Option</span>&lt;String&gt;,
+        current_file_location: <span class="prelude-ty">Option</span>&lt;String&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            previous_history_entry: previous_file_location.map(|l| MetadataLog {
+            previous_history_entry: current_file_location.map(|l| MetadataLog {
                 metadata_file: l,
                 timestamp_ms: previous.last_updated_ms,
             }),
@@ -3374,6 +3376,7 @@
         <span class="macro">assert_eq!</span>(metadata.last_partition_id, <span class="number">1000</span>);
         <span class="macro">assert_eq!</span>(metadata.last_column_id, <span class="number">3</span>);
         <span class="macro">assert_eq!</span>(metadata.snapshots.len(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(metadata.current_snapshot_id, <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(metadata.refs.len(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(metadata.properties.len(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(metadata.metadata_log.len(), <span class="number">0</span>);
@@ -3422,6 +3425,7 @@
         <span class="macro">assert_eq!</span>(metadata.last_partition_id, UNPARTITIONED_LAST_ASSIGNED_ID);
         <span class="macro">assert_eq!</span>(metadata.last_column_id, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(metadata.snapshots.len(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(metadata.current_snapshot_id, <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(metadata.refs.len(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(metadata.properties.len(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(metadata.metadata_log.len(), <span class="number">0</span>);
@@ -3972,7 +3976,7 @@
             .with_manifest_list(<span class="string">"/snap-1.avro"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::from_iter(<span class="macro">vec!</span>[
+                additional_properties: HashMap::from_iter(<span class="macro">vec!</span>[
                     (
                         <span class="string">"spark.app.id"</span>.to_string(),
                         <span class="string">"local-1662532784305"</span>.to_string(),
@@ -4035,7 +4039,7 @@
             .with_manifest_list(<span class="string">"/snap-1.avro"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::from_iter(<span class="macro">vec!</span>[
+                additional_properties: HashMap::from_iter(<span class="macro">vec!</span>[
                     (
                         <span class="string">"spark.app.id"</span>.to_string(),
                         <span class="string">"local-1662532784305"</span>.to_string(),
@@ -4055,7 +4059,7 @@
             .with_manifest_list(<span class="string">"/snap-1.avro"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::from_iter(<span class="macro">vec!</span>[
+                additional_properties: HashMap::from_iter(<span class="macro">vec!</span>[
                     (
                         <span class="string">"spark.app.id"</span>.to_string(),
                         <span class="string">"local-1662532784305"</span>.to_string(),
@@ -4103,7 +4107,7 @@
             .with_manifest_list(<span class="string">"/snap-1.avro"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::new(),
+                additional_properties: HashMap::new(),
             })
             .build();
 
@@ -4148,7 +4152,7 @@
             .with_manifest_list(<span class="string">"/snap-1.avro"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::from_iter(<span class="macro">vec!</span>[
+                additional_properties: HashMap::from_iter(<span class="macro">vec!</span>[
                     (
                         <span class="string">"spark.app.id"</span>.to_string(),
                         <span class="string">"local-1662532784305"</span>.to_string(),
@@ -4268,7 +4272,7 @@
             .with_manifest_list(<span class="string">"/snap-1"</span>)
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::new(),
+                additional_properties: HashMap::new(),
             })
             .build();
 
@@ -4294,7 +4298,7 @@
             .with_parent_snapshot_id(<span class="prelude-val">Some</span>(<span class="number">1</span>))
             .with_summary(Summary {
                 operation: Operation::Append,
-                other: HashMap::new(),
+                additional_properties: HashMap::new(),
             })
             .build();
 
