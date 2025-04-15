@@ -235,7 +235,7 @@ impl FileRead for opendal::Reader {
 }
 
 /// Input file is used for reading from files.
-#[derive(Debug)]
+#[derive(Clone,Debug)]
 pub struct InputFile {
     op: Operator,
     // Absolution path of file.

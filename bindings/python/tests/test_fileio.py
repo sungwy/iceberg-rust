@@ -15,24 +15,17 @@
 # specific language governing permissions and limitations
 # under the License.
 
-[package]
-edition = "2021"
-homepage = "https://rust.iceberg.apache.org"
-name = "pyiceberg_core_rust"
-rust-version = "1.84"
-version = "0.4.0"
-# This crate is used to build python bindings, we don't want to publish it
-publish = false
+import pytest
+from pyiceberg_core import fileio
 
-keywords = ["iceberg"]
-license = "Apache-2.0"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-arrow = { version = "54.1.0", features = ["pyarrow", "chrono-tz"] }
-iceberg = { path = "../../crates/iceberg" }
-pyo3 = { version = "0.23.3", features = ["extension-module", "abi3-py39"] }
-pyo3-async-runtimes = { version = "0.23.0", features = ["tokio-runtime"] }
-tokio = "1"
+def test_inputfile():
+    path = "file:/haha.txt"
+    input_file = fileio.InputFile(path)
+    assert input_file.location() == path
+    
+@pytest.mark.asyncio
+async def test_inputfile_async_funcs():
+    path = "file:/haha.txt"
+    input_file = fileio.InputFile(path)
+    assert input_file.location() == path
+    assert await input_file.exists() == False

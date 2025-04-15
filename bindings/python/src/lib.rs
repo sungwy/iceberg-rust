@@ -18,10 +18,12 @@
 use pyo3::prelude::*;
 
 mod error;
+mod fileio;
 mod transform;
 
 #[pymodule]
 fn pyiceberg_core_rust(py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    fileio::register_module(py, m)?;
     transform::register_module(py, m)?;
     Ok(())
 }
