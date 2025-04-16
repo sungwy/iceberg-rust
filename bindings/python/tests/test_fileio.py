@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import os
 import pytest
 from pyiceberg_core import fileio
 
@@ -25,7 +26,19 @@ def test_inputfile():
     
 @pytest.mark.asyncio
 async def test_inputfile_async_funcs():
-    path = "file:/haha.txt"
+    os.remove("/tmp/haha.txt")
+    
+    path = "file:/tmp/haha.txt"
     input_file = fileio.InputFile(path)
     assert input_file.location() == path
     assert await input_file.exists() == False
+    
+    body = "This is the first line.\n"
+    with open("/tmp/haha.txt", "w") as file:
+        file.write(body)
+        
+    input_file = fileio.InputFile(path)
+    
+    # assert await input_file.exists() == True
+    
+    assert await input_file.read() == body.encode()

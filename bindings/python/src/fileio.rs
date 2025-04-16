@@ -18,9 +18,22 @@
 pub use ::iceberg::io as icebergiocore;
 
 use pyo3::prelude::*;
+use pyo3::types::PyBytes;
 use crate::error::to_py_err;
 use pyo3_async_runtimes::tokio::future_into_py;
 
+#[pyclass]
+pub struct FileMetadata {
+    core: icebergiocore::FileMetadata,
+}
+
+#[pymethods]
+impl FileMetadata {
+    #[getter]
+    pub fn size(&self) -> u64 {
+        self.core.size
+    }
+}
 
 #[pyclass]
 pub struct InputFile {
@@ -47,6 +60,26 @@ impl InputFile {
         let this = self.core.clone();
         future_into_py(py, async move {
             this.exists().await.map_err(to_py_err)
+        })
+    }
+
+    pub fn read<'p>(&'p self, py: Python<'p>) -> PyResult<Bound<'p, PyAny>> {
+        let this = self.core.clone();
+        future_into_py(py, async move {
+            let res = this.read().await.map_err(to_py_err)?.to_vec();
+            Python::with_gil(|py| {
+                let py_bytes = PyBytes::new(py, &res);
+                Ok(py_bytes.to_object(py))
+            })
+        })
+    }
+
+    pub fn metadata<'p>(&'p self, py: Python<'p>) -> PyResult<Bound<'p, PyAny>> {
+        let this = self.core.clone();
+        future_into_py(py, async move {
+            Ok(FileMetadata {
+                core: this.metadata().await.map_err(to_py_err)?
+            })
         })
     }
 }
