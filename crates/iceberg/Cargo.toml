@@ -92,6 +92,7 @@ pretty_assertions = { workspace = true }
 rand = { workspace = true }
 regex = { workspace = true }
 serde_arrow = { version = "0.14", features = ["arrow-58"] }
+serde_json = { workspace = true }
 tempfile = { workspace = true }
 
 [package.metadata.cargo-machete]
