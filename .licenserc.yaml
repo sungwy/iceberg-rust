@@ -24,6 +24,9 @@ header:
     - "LICENSE"
     - "NOTICE"
     - ".gitattributes"
+    - ".gitmodules"
+    # iceberg-testing is a submodule with its own license
+    - "iceberg-testing"
     - "**/*.json"
     # Generated content by mdbook
     - "website/book"
